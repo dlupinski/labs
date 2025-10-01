@@ -1,0 +1,20 @@
+# get current context (read from .kube/config)
+kubectl config current-context
+
+# get namespaces 
+kubectl get namespaces
+
+# get yaml manifest for a pod
+kubectl get pod nginx-duane -o yaml | less
+
+# list all pods (including IP details)
+kubectl get pods -o wide
+NAME          READY   STATUS    RESTARTS   AGE   IP           NODE                   NOMINATED NODE   READINESS GATES
+httpd-duane   1/1     Running   0          23h   10.42.0.10   lima-rancher-desktop   <none>           <none>
+nginx-duane   1/1     Running   0          23h   10.42.0.9    lima-rancher-desktop   <none>           <none>
+
+# describe a pod
+kubectl describe pod nginx-duane
+
+# start a pod
+kubectl run nginx-duane --image=nginx
