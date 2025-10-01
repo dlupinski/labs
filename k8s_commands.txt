@@ -18,3 +18,9 @@ kubectl describe pod nginx-duane
 
 # start a pod
 kubectl run nginx-duane --image=nginx
+
+# edit a pod
+kubectl edit pod httpd-duane
+
+# get just a yaml file
+kubectl run nginx-yaml --image=nginx --dry-run=client -o yaml
