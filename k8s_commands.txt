@@ -24,3 +24,22 @@ kubectl edit pod httpd-duane
 
 # get just a yaml file
 kubectl run nginx-yaml --image=nginx --dry-run=client -o yaml
+
+# get the yaml and write to a file
+kubectl run nginx --image=nginx --dry-run=client -o yaml > nginx.yaml
+
+# apply yaml file to a cluster
+kubectl create -f nginx.yaml
+# or
+kubectl apply -f nginx.yaml
+
+# describe it
+kubectl describe pod nginx-yaml
+
+# delete a pod
+kubectl delete pod nginx-yaml
+
+# execute a command to get "into a pod" (getting an interactive shell)
+#  to control pod at os level (in this case for a pod named nginx-docs)
+#  to explore file system, run os commands such as top, etc
+kubectl exec -it nginx-docs -- /bin/bash
