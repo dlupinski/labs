@@ -43,3 +43,29 @@ kubectl delete pod nginx-yaml
 #  to control pod at os level (in this case for a pod named nginx-docs)
 #  to explore file system, run os commands such as top, etc
 kubectl exec -it nginx-docs -- /bin/bash
+
+####################DEPLOYMENTS ##############################
+# deployments
+kubectl create deployment -h | less 
+
+# create a deployment with three replicas
+kubectl create deploy test --image=httpd --replicas=3
+
+kubectl get deployments
+
+# to edit a deployment (similar to kubectl edit pod)
+kubectl edit deployment test
+
+# one method to generate yaml w/o having to create the pod (w/ --dry-run)
+k run duane --image=nginx --dry-run=client -o yaml
+
+# ONE METHOD TO GENERATE YAML FOR DEPLOYMENTS
+k create deploy test --image=httpd --replicas=10 --dry-run=client -o yaml > deploy.yaml
+
+# create a deployment from a file
+kubectl apply -f deploy.yaml
+
+
+# replicaset - group of pods - kubernetes manages replicasets (not manually administered)
+kubectl get replicaset
+kubectl describe replicaset
