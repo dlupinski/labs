@@ -69,3 +69,6 @@ kubectl apply -f deploy.yaml
 # replicaset - group of pods - kubernetes manages replicasets (not manually administered)
 kubectl get replicaset
 kubectl describe replicaset
+
+# get namespaces
+kubectl get namespaces
