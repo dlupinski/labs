@@ -72,3 +72,43 @@ kubectl describe replicaset
 
 # get namespaces
 kubectl get namespaces
+
+kubectl create namespace duane -o yaml --dry-run=client
+#output of above command
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: duane
+spec: {}
+status: {}
+
+k create namespace mealie --dry-run=client -o yaml > namespace.yaml
+
+# create a pod in an assigned namespace
+kubectl run duane-mealie --image=nginx --namespace mealie
+
+# update context and set new default namespace
+kubectl config set-context --current --namespace=mealie
+Context "rancher-desktop" modified.
+
+
+### SERVICES ###########
+# service has an IP address that will remain constant (i.e. endpoint)
+# creates an IP by default for the service
+
+#   LOAD BALANCER   #
+#used for cloud providers.  will create an azure loadbalancer to route traffic into the k8s cluster
+# CAN GIVE A SERVICE AN EXTERNAL IP BY USING A LOAD BALANCER - to reach your SERVICES FROM OUTSIDE THE KUBERNETES CLUSTER
+
+kubectl get service
+
+k expose deployment frontend --port 8080
+k get service
+NAME         TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)    AGE
+frontend     ClusterIP   10.43.92.252   <none>        8080/TCP   45s
+
+kubectl get service -o wide
+
+get service -o wide
+NAME         TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)    AGE     SELECTOR
+frontend     ClusterIP   10.43.92.252   <none>        8080/TCP   99s     app=frontend

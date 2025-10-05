@@ -1,0 +1,42 @@
+# create a pod in an assigned namespace
+kubectl run duane-mealie --image=nginx --namespace mealie
+
+# update context and set new default namespace
+kubectl config set-context --current --namespace=mealie
+Context "rancher-desktop" modified.
+
+# create a yaml of a deployment (--dry-run=client)
+kubectl create deployment mealie --image=nginx --dry-run=client -o yaml > deployment.yaml
+
+k apply -n mealie -f deployment.yaml
+deployment.apps/mealie created
+(base) Duanes-iMac:mealie duanelupinski$ k get pods
+NAME                      READY   STATUS              RESTARTS   AGE
+duane-mealie              1/1     Running             0          18m
+mealie-5479dbb894-bg245   0/1     ContainerCreating   0          12s
+
+# port forward to local client
+k port-forward pods/mealie-5479dbb894-bg245 9000
+
+# set service  into yaml file
+k get svc mealie -o yaml > service.yaml
+
+# EXPOSE  MEALIE "SERVICE" instead of a specific pod
+k expose deployment mealie --port 9000
+
+k get svc
+NAME     TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
+mealie   ClusterIP   10.43.152.174   <none>        9000/TCP   13s
+(base) Duanes-iMac:labs duanelupinski$ k port-forward services/mealie 9000
+Forwarding from 127.0.0.1:9000 -> 9000
+Forwarding from [::1]:9000 -> 9000
+
+# update service (or replace) and recreate with loadbalancer spec
+k delete svc mealie
+service "mealie" deleted from mealie namespace
+k apply -f service.yaml
+service/mealie created
+
+k get svc
+NAME     TYPE           CLUSTER-IP     EXTERNAL-IP    PORT(S)          AGE
+mealie   LoadBalancer   10.43.44.196   192.168.5.15   9000:30377/TCP   8s
