@@ -95,6 +95,11 @@ Context "rancher-desktop" modified.
 ### SERVICES ###########
 # service has an IP address that will remain constant (i.e. endpoint)
 # creates an IP by default for the service
+# types of services
+    ClusterIP
+    NodePort (generally not used)
+    LoadBalancer (to create an external IP - often used in the cloud if not using Ingress)
+
 
 #   LOAD BALANCER   #
 #used for cloud providers.  will create an azure loadbalancer to route traffic into the k8s cluster
@@ -112,3 +117,57 @@ kubectl get service -o wide
 get service -o wide
 NAME         TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)    AGE     SELECTOR
 frontend     ClusterIP   10.43.92.252   <none>        8080/TCP   99s     app=frontend
+
+
+# INGRESS - key point URLs are exposed via INGRESS
+
+#### LOGIN TO CONTAINER VIA BASH SHELL (EXAMPLE) ###
+k exec -it nginx-storage -- bash
+# or to connect to a specific container (use -c or --container):
+k exec -it nginx-storage -c busybox -- /bin/sh
+
+### cannot add/modify containers in a running pod, must delete pod first  ###
+k delete pod nginx-storage
+
+
+# PERSISTENT VOLUME 
+# get pv claim info
+k get pvc
+NAME          STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   VOLUMEATTRIBUTESCLASS   AGE
+mealie-data   Bound    pvc-19ec8a32-8f96-42e2-ba37-33634d0e4c74   10Mi       RWO            local-path     <unset>                 6m53s
+
+# get pv info
+k get persistentvolume
+NAME                                       CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS   CLAIM                STORAGECLASS   VOLUMEATTRIBUTESCLASS   REASON   AGE
+pvc-19ec8a32-8f96-42e2-ba37-33634d0e4c74   10Mi       RWO            Delete           Bound    mealie/mealie-data   local-path     <unset>                          86s
+
+
+# STORAGE CLASSES #
+# get available storage CLASSES
+k get storageclasses.storage.k8s.io
+NAME                   PROVISIONER             RECLAIMPOLICY   VOLUMEBINDINGMODE      ALLOWVOLUMEEXPANSION   AGE
+local-path (default)   rancher.io/local-path   Delete          WaitForFirstConsumer   false                  13d
+
+
+# HELM
+helm repo add oben01 https://oben01.github.io/charts/
+"oben01" has been added to your repositories
+
+(base) Duanes-iMac:labs duanelupinski$ helm repo update
+Hang tight while we grab the latest from your chart repositories...
+...Successfully got an update from the "oben01" chart repository
+Update Complete. ⎈Happy Helming!⎈
+(base) Duanes-iMac:labs duanelupinski$ helm repo list
+NAME  	URL                             
+oben01	https://oben01.github.io/charts/
+
+(base) Duanes-iMac:labs duanelupinski$ helm install homarr oben01/homarr --namespace homarr --create-namespace
+NAME: homarr
+LAST DEPLOYED: Sun Oct 12 12:14:55 2025
+NAMESPACE: homarr
+STATUS: deployed
+REVISION: 1
+TEST SUITE: None
+NOTES:
+1. Get the application URL by running these commands:
+  http://chart-example.local/
